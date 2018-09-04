@@ -21,13 +21,13 @@ public abstract class BaseAction<T extends Model> {
     @Autowired
     protected HttpServletRequest request;
 
-    public abstract <S extends PagingAndSortingRepository<T, Long>> S getRepository();
+    public abstract BaseService<T> getService();
 
     @RequestMapping(value = "/new", method = RequestMethod.PUT)
     public JsonResponse create(@RequestBody T model) {
         Object obj = checkField(model);
         if (obj == null) {
-            getRepository().save(model);
+            getService().getRepository().save(model);
             return new JsonResponse(model);
         } else {
             return new JsonResponse(new FailDetail(obj), Message.ExecuteFailSelfDetail);
@@ -36,11 +36,11 @@ public abstract class BaseAction<T extends Model> {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public JsonResponse update(@RequestBody T model) {
-        T t = getRepository().findOne(model.getId());
+        T t = getService().getRepository().findOne(model.getId());
         if (t == null) {
             return new JsonResponse(null, "更新对象不存在");
         } else {
-            getRepository().save(model);
+            getService().getRepository().save(model);
             return new JsonResponse(model);
         }
     }
@@ -63,8 +63,8 @@ public abstract class BaseAction<T extends Model> {
                             checkResult.put(fieldName, "不能为空");
                         } else {
                             if (((Column) annotation).unique()) {
-                                Method find = getRepository().getClass().getMethod("findBy" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1), fieldType);
-                                T obj = (T) find.invoke(getRepository(), new Object[]{get});
+                                Method find = getService().getRepository().getClass().getMethod("findBy" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1), fieldType);
+                                T obj = (T) find.invoke(getService().getRepository(), new Object[]{get});
                                 if (obj != null) {
                                     checkResult.put(fieldName, "已存在");
                                 }

@@ -23,25 +23,27 @@ public class LoginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
-        String uri = request.getRequestURI();
-        if (uri.contains("/login") || uri.contains("/register")) {
-            filterChain.doFilter(servletRequest, servletResponse);
-            return;
-        } else {
-            HttpSession session = request.getSession();
-            if (session != null) {
-                if (session.getAttribute("token") != null) {
-                    filterChain.doFilter(servletRequest, servletResponse);
-                    return;
-                }
-            }
-        }
-        request.setCharacterEncoding("utf-8");
-        response.setHeader("Content-type", "application/json;charset=UTF-8");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().append(new ObjectMapper().writeValueAsString(new JsonResponse(null, "用户未登录")));
+        filterChain.doFilter(servletRequest, servletResponse);
+        return;
+//        HttpServletRequest request = (HttpServletRequest) servletRequest;
+//        HttpServletResponse response = (HttpServletResponse) servletResponse;
+//        String uri = request.getRequestURI();
+//        if (uri.contains("/login") || uri.contains("/register")) {
+//            filterChain.doFilter(servletRequest, servletResponse);
+//            return;
+//        } else {
+//            HttpSession session = request.getSession();
+//            if (session != null) {
+//                if (session.getAttribute("token") != null) {
+//                    filterChain.doFilter(servletRequest, servletResponse);
+//                    return;
+//                }
+//            }
+//        }
+//        request.setCharacterEncoding("utf-8");
+//        response.setHeader("Content-type", "application/json;charset=UTF-8");
+//        response.setCharacterEncoding("utf-8");
+//        response.getWriter().append(new ObjectMapper().writeValueAsString(new JsonResponse(null, "用户未登录")));
     }
 
     @Override

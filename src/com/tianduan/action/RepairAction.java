@@ -5,7 +5,7 @@ import com.tianduan.base.JsonResponse;
 import com.tianduan.base.Util.HttpUtil;
 import com.tianduan.model.Repair;
 import com.tianduan.model.User;
-import com.tianduan.repository.RepairRepository;
+import com.tianduan.service.RepairService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,11 +22,11 @@ import java.util.Date;
 public class RepairAction extends BaseAction<Repair> {
 
     @Autowired
-    RepairRepository repairRepository;
+    RepairService repairService;
 
     @Override
-    public RepairRepository getRepository() {
-        return repairRepository;
+    public RepairService getService() {
+        return repairService;
     }
 
     @Override

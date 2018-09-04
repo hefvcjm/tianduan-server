@@ -2,7 +2,7 @@ package com.tianduan.action;
 
 import com.tianduan.base.BaseAction;
 import com.tianduan.model.Client;
-import com.tianduan.repository.ClientRepository;
+import com.tianduan.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClientAction extends BaseAction<Client> {
 
     @Autowired
-    ClientRepository clientRepository;
+    ClientService clientService;
 
     @Override
-    public ClientRepository getRepository() {
-        return clientRepository;
+    public ClientService getService() {
+        return clientService;
     }
 
 

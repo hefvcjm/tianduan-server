@@ -2,7 +2,7 @@ package com.tianduan.action;
 
 import com.tianduan.base.BaseAction;
 import com.tianduan.model.Maintain;
-import com.tianduan.repository.MaintainRepository;
+import com.tianduan.service.MaintainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class MaintainAction extends BaseAction<Maintain> {
 
     @Autowired
-    MaintainRepository maintainRepository;
+    MaintainService maintainService;
 
     @Override
-    public MaintainRepository getRepository() {
-        return maintainRepository;
+    public MaintainService getService() {
+        return maintainService;
     }
 }

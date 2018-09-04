@@ -5,7 +5,7 @@ import com.tianduan.base.FailDetail;
 import com.tianduan.base.JsonResponse;
 import com.tianduan.base.Message;
 import com.tianduan.model.User;
-import com.tianduan.repository.UserRepository;
+import com.tianduan.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +20,11 @@ import java.util.Date;
 public class UserAction extends BaseAction<User> {
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @Override
-    public UserRepository getRepository() {
-        return userRepository;
+    public UserService getService() {
+        return userService;
     }
 
     @Override
@@ -36,13 +36,13 @@ public class UserAction extends BaseAction<User> {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public JsonResponse login(@RequestPart String phone, @RequestPart String password) {
-        User user = getRepository().findByPhone(phone);
+        User user = getService().getRepository().findByPhone(phone);
         if (user == null) {
             return new JsonResponse(new FailDetail("用户不存在"), Message.ExecuteFailSelfDetail);
         } else {
             if (user.getPassword().equals(password)) {
                 user.setLogintime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                getRepository().save(user);
+                getService().getRepository().save(user);
                 HttpSession session = request.getSession();
                 session.setAttribute("token", user);
                 return new JsonResponse(user);
@@ -66,6 +66,6 @@ public class UserAction extends BaseAction<User> {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public JsonResponse getAllUsers() {
-        return new JsonResponse(userRepository.findAll());
+        return new JsonResponse(getService().getRepository().findAll());
     }
 }

@@ -2,17 +2,22 @@ package com.tianduan.model;
 
 
 import com.tianduan.base.annotation.ToStringIgnore;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
-public class User extends Model {
+public class User extends Model implements UserDetails {
 
     private static final long SERIALVERSIONUID = 1L;
 
     //用户账号名
-    public static final String COL_USER = "user";
+    public static final String COL_USER = "username";
     //用户姓名
     public static final String COL_NAME = "name";
     //用户手机号
@@ -40,7 +45,7 @@ public class User extends Model {
     }
 
     @Column(name = COL_USER, unique = true, nullable = false)
-    private String user;
+    private String username;
     @Column(name = COL_NAME)
     private String name;
     @Column(name = COL_PHONE, nullable = false, unique = true)
@@ -64,20 +69,18 @@ public class User extends Model {
     private String logintime;
     @Column(name = COL_TYPE, nullable = false)
     private String type;
+    @ManyToMany(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
+    private List<Role> roles;
 
-    public User(String user, String phone, String password, String type) {
-        this.user = user;
+    public User(String username, String phone, String password, String type) {
+        this.username = username;
         this.phone = phone;
         this.password = password;
         this.type = type;
     }
 
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {
@@ -96,9 +99,6 @@ public class User extends Model {
         this.phone = phone;
     }
 
-    public String getPassword() {
-        return password;
-    }
 
     public void setPassword(String password) {
         this.password = password;
@@ -166,5 +166,52 @@ public class User extends Model {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> auths = new ArrayList<>();
+        List<Role> roles = this.getRoles();
+        for (Role role : roles) {
+            auths.add(new SimpleGrantedAuthority(role.getName()));
+        }
+        return auths;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
