@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-public class User extends Model implements UserDetails {
+public class User extends Model{
 
     private static final long SERIALVERSIONUID = 1L;
 
@@ -79,6 +79,10 @@ public class User extends Model implements UserDetails {
         this.type = type;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -99,6 +103,9 @@ public class User extends Model implements UserDetails {
         this.phone = phone;
     }
 
+    public String getPassword() {
+        return password;
+    }
 
     public void setPassword(String password) {
         this.password = password;
@@ -174,44 +181,5 @@ public class User extends Model implements UserDetails {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> auths = new ArrayList<>();
-        List<Role> roles = this.getRoles();
-        for (Role role : roles) {
-            auths.add(new SimpleGrantedAuthority(role.getName()));
-        }
-        return auths;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 }
