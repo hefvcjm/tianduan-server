@@ -18,7 +18,7 @@ import java.util.Date;
 
 @RestController
 @Scope("prototype")
-@RequestMapping("repair")
+@RequestMapping("/repair")
 public class RepairAction extends BaseAction<Repair> {
 
     @Autowired
