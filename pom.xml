@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>tianduan</groupId>
     <artifactId>tianduan</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>tianduan</name>
 
@@ -72,6 +72,21 @@
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>2.1</version>
+        </dependency>
+
+        <!--基于注解方式的 WebSocket-->
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--日志包-->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.12</version>
         </dependency>
 
     </dependencies>
