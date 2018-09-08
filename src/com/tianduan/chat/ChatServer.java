@@ -16,8 +16,9 @@ public class ChatServer {
     private static Logger logger = Logger.getLogger(ChatServer.class);
 
     @OnOpen
-    public void onOpen() {
+    public void onOpen(Session session) {
         logger.info("连接建立");
+        logger.debug(session.getUserProperties().toString());
     }
 
     @OnClose

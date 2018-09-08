@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @MappedSuperclass
 public class Model implements Serializable {
@@ -19,11 +20,17 @@ public class Model implements Serializable {
      * 主键名称
      */
     public static final String COL_PRIMARYKEY = "id";
+    /**
+     *
+     */
+    public static final String COL_OBJECTID = "objectId";
 
     @Id
     @Column(name = COL_PRIMARYKEY)
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
+    @Column(name = COL_OBJECTID, unique = true, nullable = false)
+    protected String objectId = UUID.randomUUID().toString().replace("-", "");
 
     public Model() {
     }
@@ -34,6 +41,14 @@ public class Model implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 
     @Override

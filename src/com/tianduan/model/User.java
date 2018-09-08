@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class User extends Model{
+public class User extends Model {
 
     private static final long SERIALVERSIONUID = 1L;
 
@@ -35,6 +35,8 @@ public class User extends Model{
     public static final String COL_LOGINTIME = "logintime";
     //用户类型
     public static final String COL_TYPE = "type";
+    //token
+    public static final String COL_TOKEN = "token";
 
     public User() {
     }
@@ -64,7 +66,9 @@ public class User extends Model{
     private String logintime;
     @Column(name = COL_TYPE, nullable = false)
     private String type;
-    @ManyToMany(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
+    @Column(name = COL_TOKEN, nullable = false)
+    private String token;
+    @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private List<Role> roles;
 
     public User(String username, String phone, String password, String type) {
@@ -168,6 +172,14 @@ public class User extends Model{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public List<Role> getRoles() {
