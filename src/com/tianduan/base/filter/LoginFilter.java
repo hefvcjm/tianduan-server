@@ -28,13 +28,14 @@ public class LoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String uri = request.getRequestURI();
+        logger.info(uri);
         if (uri.contains("/login") || uri.contains("/register") || uri.contains("/chat")) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         } else {
             HttpSession session = request.getSession();
             if (session != null) {
-                if (session.getAttribute("token") != null) {
+                if (session.getAttribute("user") != null) {
                     filterChain.doFilter(servletRequest, servletResponse);
                     return;
                 }

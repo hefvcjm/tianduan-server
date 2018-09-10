@@ -4,6 +4,7 @@ import com.tianduan.base.BaseAction;
 import com.tianduan.base.FailDetail;
 import com.tianduan.base.JsonResponse;
 import com.tianduan.base.Message;
+import com.tianduan.base.Util.TokenUtil;
 import com.tianduan.model.User;
 import com.tianduan.service.UserService;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -40,6 +41,8 @@ public class UserAction extends BaseAction<User> {
     @RequestMapping(value = "/register", method = RequestMethod.PUT)
     public JsonResponse create(@RequestBody User user) {
         user.setRegistertime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        user.setObjectId(UUID.randomUUID().toString().replace("-", ""));
+        user.setToken(TokenUtil.getToken(user.getPhone(), user.getObjectId()));
         return super.create(user);
     }
 
@@ -53,7 +56,7 @@ public class UserAction extends BaseAction<User> {
                 user.setLogintime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 getService().getRepository().save(user);
                 HttpSession session = request.getSession();
-                session.setAttribute("token", user);
+                session.setAttribute("user", user);
                 return new JsonResponse(user);
             } else {
                 return new JsonResponse(null, "密码错误");
@@ -64,9 +67,9 @@ public class UserAction extends BaseAction<User> {
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public JsonResponse logout() {
         HttpSession session = request.getSession();
-        Object token = session.getAttribute("token");
+        Object token = session.getAttribute("user");
         if (token != null) {
-            session.removeAttribute("token");
+            session.removeAttribute("user");
             return new JsonResponse(null, Message.ExecuteOK);
         } else {
             return new JsonResponse(null, "用户未登录");

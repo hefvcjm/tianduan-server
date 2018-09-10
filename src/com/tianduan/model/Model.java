@@ -30,7 +30,7 @@ public class Model implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
     @Column(name = COL_OBJECTID, unique = true, nullable = false)
-    protected String objectId = UUID.randomUUID().toString().replace("-", "");
+    protected String objectId;
 
     public Model() {
     }
