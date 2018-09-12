@@ -28,9 +28,9 @@ public class RepairStatus extends Model {
     public RepairStatus() {
     }
 
-    public RepairStatus(long id) {
-        super(id);
-    }
+//    public RepairStatus(long id) {
+//        super(id);
+//    }
 
     public Repair getRepair() {
         return repair;

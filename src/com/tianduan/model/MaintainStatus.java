@@ -26,9 +26,9 @@ public class MaintainStatus extends Model {
     public MaintainStatus() {
     }
 
-    public MaintainStatus(long id) {
-        super(id);
-    }
+//    public MaintainStatus(long id) {
+//        super(id);
+//    }
 
     public Maintain getMaintain() {
         return maintain;

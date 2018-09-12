@@ -27,9 +27,9 @@ public class Maintain extends Model {
     public Maintain() {
     }
 
-    public Maintain(long id) {
-        super(id);
-    }
+//    public Maintain(long id) {
+//        super(id);
+//    }
 
     public Repair getRepair() {
         return repair;

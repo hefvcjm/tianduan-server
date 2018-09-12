@@ -44,13 +44,12 @@ public class UserAction extends BaseAction<User> {
     @RequestMapping(value = "/register", method = RequestMethod.PUT)
     public JsonResponse create(@RequestBody User user) {
         user.setRegistertime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        user.setObjectId(UUID.randomUUID().toString().replace("-", ""));
         user.setToken(TokenUtil.getToken(user.getPhone(), user.getObjectId()));
         return super.create(user);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public JsonResponse login(@RequestPart String phone, @RequestPart String password) {
+    public JsonResponse login(@RequestParam String phone, @RequestParam String password) {
         User user = getService().getRepository().findByPhone(phone);
         if (user == null) {
             return new JsonResponse(new FailDetail("用户不存在"), Message.ExecuteFailSelfDetail);
@@ -58,17 +57,17 @@ public class UserAction extends BaseAction<User> {
             if (user.getPassword().equals(password)) {
                 user.setLogintime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 getService().getRepository().save(user);
-                Client client = Repository.getRepositoryByModelName("Client");
                 HttpSession session = request.getSession();
-                if (client != null) {
-                    session.setAttribute(HttpUtil.KEY_USER, client);
-                    return new JsonResponse(client);
-                }
-                Engineer engineer = Repository.getRepositoryByModelName("Engineer");
-                if (engineer != null) {
-                    session.setAttribute(HttpUtil.KEY_USER, engineer);
-                    return new JsonResponse(engineer);
-                }
+//                Client client = Repository.getInstance().getRepositoryByModelName("Client");
+//                if (client != null) {
+//                    session.setAttribute(HttpUtil.KEY_USER, client);
+//                    return new JsonResponse(client);
+//                }
+//                Engineer engineer = Repository.getInstance().getRepositoryByModelName("Engineer");
+//                if (engineer != null) {
+//                    session.setAttribute(HttpUtil.KEY_USER, engineer);
+//                    return new JsonResponse(engineer);
+//                }
                 session.setAttribute(HttpUtil.KEY_USER, user);
                 return new JsonResponse(user);
             } else {

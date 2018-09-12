@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class BaseAction<T extends Model> {
 
@@ -27,6 +28,8 @@ public abstract class BaseAction<T extends Model> {
     public JsonResponse create(@RequestBody T model) {
         Object obj = checkField(model);
         if (obj == null) {
+            model.setObjectId(UUID.randomUUID().toString().replace("-", ""));
+            System.out.println(model.getObjectId());
             getService().getRepository().save(model);
             return new JsonResponse(model);
         } else {

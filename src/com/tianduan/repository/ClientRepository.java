@@ -8,4 +8,5 @@ public interface ClientRepository extends PagingAndSortingRepository<Client, Lon
 
     Client findByUser(User user);
 
+    Client findByCode(String code);
 }

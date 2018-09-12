@@ -12,8 +12,8 @@ public class Client extends Model {
     //账号
     public static final String COL_CODE = "code";
 
-    @OneToOne
-    @JoinColumn(name = COL_USER, referencedColumnName = User.COL_PRIMARYKEY)
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = COL_USER, referencedColumnName = User.COL_PRIMARYKEY, unique = true)
     private User user;
     @Column(name = COL_CODE, unique = true, nullable = false)
     private String code;
@@ -21,9 +21,9 @@ public class Client extends Model {
     public Client() {
     }
 
-    public Client(long id) {
-        super(id);
-    }
+//    public Client(long id) {
+//        super(id);
+//    }
 
     public Client(User user, String code) {
         this.user = user;

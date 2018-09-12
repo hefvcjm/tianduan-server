@@ -14,7 +14,7 @@ public class Engineer extends Model {
     public static final String COL_CODE = "code";
 
     @OneToOne
-    @JoinColumn(name = COL_USER, referencedColumnName = User.COL_PRIMARYKEY)
+    @JoinColumn(name = COL_USER, referencedColumnName = User.COL_PRIMARYKEY, unique = true)
     private User user;
     @Column(name = COL_CODE, unique = true, nullable = false)
     private String code;
@@ -24,9 +24,9 @@ public class Engineer extends Model {
     public Engineer() {
     }
 
-    public Engineer(long id) {
-        super(id);
-    }
+//    public Engineer(long id) {
+//        super(id);
+//    }
 
     public Engineer(User user, String code) {
         this.user = user;

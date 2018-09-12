@@ -60,9 +60,9 @@ public class Repair extends Model {
     public Repair() {
     }
 
-    public Repair(long id) {
-        super(id);
-    }
+//    public Repair(long id) {
+//        super(id);
+//    }
 
     public Repair(Client client, String ticket) {
         this.client = client;

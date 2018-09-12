@@ -1,8 +1,11 @@
 package com.tianduan.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tianduan.base.annotation.ToStringIgnore;
 import com.tianduan.repository.Repository;
+import com.tianduan.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.lang.reflect.Field;
@@ -72,11 +75,23 @@ public class User extends Model {
     @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private List<Role> roles;
 
+    @Transient
+    @JsonIgnore
+    @ToStringIgnore
+    @Autowired
+    UserRepository repository;
+
     public User() {
     }
 
     public User(long id) {
-        super(id);
+        User user = repository.findOne(id);
+        copy(user);
+    }
+
+    public User(String objectId) {
+        User user = repository.findByObjectId(objectId);
+        copy(user);
     }
 
     public User(String username, String phone, String password, String type) {
@@ -84,6 +99,28 @@ public class User extends Model {
         this.phone = phone;
         this.password = password;
         this.type = type;
+    }
+
+    private void copy(User user) {
+        Field[] fields = getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getAnnotation(Column.class) != null) {
+                String fieldName = field.getName();
+                String getName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                String setName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                try {
+                    Method getMethod = getClass().getMethod(getName);
+                    Method setMethod = getClass().getMethod(setName);
+                    setMethod.invoke(this, getMethod.invoke(user));
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public String getUsername() {
