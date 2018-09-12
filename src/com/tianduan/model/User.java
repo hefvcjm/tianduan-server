@@ -2,8 +2,12 @@ package com.tianduan.model;
 
 
 import com.tianduan.base.annotation.ToStringIgnore;
+import com.tianduan.repository.Repository;
 
 import javax.persistence.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 @Entity
@@ -38,9 +42,6 @@ public class User extends Model {
     //token
     public static final String COL_TOKEN = "token";
 
-    public User() {
-    }
-
     @Column(name = COL_USER, unique = true, nullable = false)
     private String username;
     @Column(name = COL_NAME)
@@ -70,6 +71,13 @@ public class User extends Model {
     private String token;
     @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private List<Role> roles;
+
+    public User() {
+    }
+
+    public User(long id) {
+        super(id);
+    }
 
     public User(String username, String phone, String password, String type) {
         this.username = username;

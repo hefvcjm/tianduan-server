@@ -20,6 +20,10 @@ public class Role extends Model {
 
     }
 
+    public Role(long id) {
+        super(id);
+    }
+
     public String getName() {
         return name;
     }

@@ -4,8 +4,12 @@ import com.tianduan.base.BaseAction;
 import com.tianduan.base.FailDetail;
 import com.tianduan.base.JsonResponse;
 import com.tianduan.base.Message;
+import com.tianduan.base.Util.HttpUtil;
 import com.tianduan.base.Util.TokenUtil;
+import com.tianduan.model.Client;
+import com.tianduan.model.Engineer;
 import com.tianduan.model.User;
+import com.tianduan.repository.Repository;
 import com.tianduan.service.UserService;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +23,6 @@ import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -55,8 +58,18 @@ public class UserAction extends BaseAction<User> {
             if (user.getPassword().equals(password)) {
                 user.setLogintime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 getService().getRepository().save(user);
+                Client client = Repository.getRepositoryByModelName("Client");
                 HttpSession session = request.getSession();
-                session.setAttribute("user", user);
+                if (client != null) {
+                    session.setAttribute(HttpUtil.KEY_USER, client);
+                    return new JsonResponse(client);
+                }
+                Engineer engineer = Repository.getRepositoryByModelName("Engineer");
+                if (engineer != null) {
+                    session.setAttribute(HttpUtil.KEY_USER, engineer);
+                    return new JsonResponse(engineer);
+                }
+                session.setAttribute(HttpUtil.KEY_USER, user);
                 return new JsonResponse(user);
             } else {
                 return new JsonResponse(null, "密码错误");
@@ -67,9 +80,9 @@ public class UserAction extends BaseAction<User> {
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public JsonResponse logout() {
         HttpSession session = request.getSession();
-        Object token = session.getAttribute("user");
+        Object token = session.getAttribute(HttpUtil.KEY_USER);
         if (token != null) {
-            session.removeAttribute("user");
+            session.removeAttribute(HttpUtil.KEY_USER);
             return new JsonResponse(null, Message.ExecuteOK);
         } else {
             return new JsonResponse(null, "用户未登录");

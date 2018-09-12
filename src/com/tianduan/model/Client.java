@@ -21,6 +21,10 @@ public class Client extends Model {
     public Client() {
     }
 
+    public Client(long id) {
+        super(id);
+    }
+
     public Client(User user, String code) {
         this.user = user;
         this.code = code;

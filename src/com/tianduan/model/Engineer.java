@@ -24,6 +24,10 @@ public class Engineer extends Model {
     public Engineer() {
     }
 
+    public Engineer(long id) {
+        super(id);
+    }
+
     public Engineer(User user, String code) {
         this.user = user;
         this.code = code;

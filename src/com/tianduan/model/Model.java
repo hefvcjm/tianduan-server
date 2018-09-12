@@ -1,6 +1,7 @@
 package com.tianduan.model;
 
 import com.tianduan.base.annotation.ToStringIgnore;
+import com.tianduan.repository.Repository;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -33,6 +34,29 @@ public class Model implements Serializable {
     protected String objectId;
 
     public Model() {
+    }
+
+    public Model(long id) {
+        Model model = Repository.getRepositoryByModelName(getClass().getSimpleName()).findOne(id);
+        Field[] fields = getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getAnnotation(Column.class) != null) {
+                String fieldName = field.getName();
+                String getName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                String setName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                try {
+                    Method getMethod = getClass().getMethod(getName);
+                    Method setMethod = getClass().getMethod(setName);
+                    setMethod.invoke(this, getMethod.invoke(model));
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public Long getId() {
