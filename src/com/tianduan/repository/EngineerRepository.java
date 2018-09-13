@@ -9,4 +9,6 @@ public interface EngineerRepository extends PagingAndSortingRepository<Engineer,
     Engineer findByUser(User user);
 
     Engineer findByCode(String code);
+
+    Engineer findByObjectId(String objectId);
 }

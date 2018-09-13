@@ -15,13 +15,12 @@ public class Maintain extends Model {
     //状态
     public static final String COL_STATUS = "status";
 
-    @ManyToOne
-    @JoinColumn(name = COL_REPAIR, nullable = false)
+    @OneToOne(cascade = {CascadeType.REFRESH})
+    @JoinColumn(name = COL_REPAIR, referencedColumnName = Repair.COL_PRIMARYKEY, nullable = false)
     private Repair repair;
-    @ManyToOne
-    @JoinColumn(name = COL_ENGINEER, nullable = false)
-    private Engineer engineer;
-    @OneToMany(mappedBy = MaintainStatus.COL_PRIMARYKEY)
+    @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    private Set<Engineer> engineers;
+    @OneToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = MaintainStatus.COL_MAINTAIN)
     private Set<MaintainStatus> statuses;
 
     public Maintain() {
@@ -39,12 +38,12 @@ public class Maintain extends Model {
         this.repair = repair;
     }
 
-    public Engineer getEngineer() {
-        return engineer;
+    public Set<Engineer> getEngineers() {
+        return engineers;
     }
 
-    public void setEngineer(Engineer engineer) {
-        this.engineer = engineer;
+    public void setEngineers(Set<Engineer> engineers) {
+        this.engineers = engineers;
     }
 
     public Set<MaintainStatus> getStatuses() {

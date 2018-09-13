@@ -1,9 +1,6 @@
 package com.tianduan.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 public class RepairStatus extends Model {
@@ -17,7 +14,7 @@ public class RepairStatus extends Model {
     //状态
     public static final String COL_STATUS = "status";
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = COL_REPAIR, nullable = false)
     private Repair repair;
     @Column(name = COL_TIME, nullable = false)

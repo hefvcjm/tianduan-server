@@ -13,13 +13,11 @@ public class Engineer extends Model {
     //工程师编号
     public static final String COL_CODE = "code";
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = COL_USER, referencedColumnName = User.COL_PRIMARYKEY, unique = true)
     private User user;
     @Column(name = COL_CODE, unique = true, nullable = false)
     private String code;
-    @OneToMany(mappedBy = Maintain.COL_ENGINEER)
-    private Set<Maintain> maintains;
 
     public Engineer() {
     }
@@ -47,13 +45,5 @@ public class Engineer extends Model {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public Set<Maintain> getMaintains() {
-        return maintains;
-    }
-
-    public void setMaintains(Set<Maintain> maintains) {
-        this.maintains = maintains;
     }
 }

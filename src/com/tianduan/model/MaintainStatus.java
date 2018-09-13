@@ -15,8 +15,8 @@ public class MaintainStatus extends Model {
     public static final String COL_STATUS = "status";
 
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = COL_MAINTAIN, nullable = false)
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
+    @JoinColumn(name = COL_MAINTAIN, referencedColumnName = Maintain.COL_PRIMARYKEY, nullable = false)
     private Maintain maintain;
     @Column(name = COL_TIME, nullable = false)
     private String time;

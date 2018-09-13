@@ -31,7 +31,7 @@ public class Repair extends Model {
     //状态
     public static final String COL_STATUS = "status";
 
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = COL_CLIENT, referencedColumnName = Client.COL_PRIMARYKEY, nullable = false)
     private Client client;
     @Column(name = COL_NAME)
@@ -52,10 +52,8 @@ public class Repair extends Model {
     private String audios;
     @Column(name = COL_VIDEOS)
     private String videos;
-    @OneToMany(mappedBy = RepairStatus.COL_PRIMARYKEY)
+    @OneToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = RepairStatus.COL_REPAIR)
     private Set<RepairStatus> statuses;
-    @OneToMany(mappedBy = Maintain.COL_REPAIR)
-    private Set<Maintain> maintains;
 
     public Repair() {
     }
@@ -155,14 +153,6 @@ public class Repair extends Model {
 
     public void setStatuses(Set<RepairStatus> statuses) {
         this.statuses = statuses;
-    }
-
-    public Set<Maintain> getMaintains() {
-        return maintains;
-    }
-
-    public void setMaintains(Set<Maintain> maintains) {
-        this.maintains = maintains;
     }
 
 }
