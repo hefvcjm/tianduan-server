@@ -33,11 +33,13 @@ public abstract class BaseAction<T extends Model> {
 
     public abstract BaseService<T> getService();
 
-    @RequestMapping(value = "/new", method = RequestMethod.PUT)
+    //@RequestMapping(value = "/new", method = RequestMethod.PUT)
     public JsonResponse create(@RequestBody T model) {
         Object obj = checkField(model);
         if (obj == null) {
-            model.setObjectId(UUID.randomUUID().toString().replace("-", ""));
+            if (model.getObjectId() == null || model.getObjectId() == "") {
+                model.setObjectId(UUID.randomUUID().toString().replace("-", ""));
+            }
             System.out.println(model.getObjectId());
             getService().getRepository().save(model);
             return new JsonResponse(model);

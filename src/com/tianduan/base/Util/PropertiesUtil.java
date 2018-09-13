@@ -16,7 +16,7 @@ public class PropertiesUtil {
     private static Properties properties = new Properties();
 
     static {
-        init("/properties/authority.properties");
+        init("/properties/app-config.properties");
     }
 
     private static void init(String profile) {
@@ -28,8 +28,8 @@ public class PropertiesUtil {
         }
     }
 
-    public static String getProperties(String ksy) {
-        return properties.getProperty(ksy);
+    public static String getProperties(String key) {
+        return properties.getProperty(key);
     }
 
     public static boolean checkRoleIsOverlap(User user, Role role) {
