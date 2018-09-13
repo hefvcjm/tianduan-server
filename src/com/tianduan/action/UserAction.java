@@ -6,10 +6,10 @@ import com.tianduan.base.JsonResponse;
 import com.tianduan.base.Message;
 import com.tianduan.base.Util.HttpUtil;
 import com.tianduan.base.Util.TokenUtil;
-import com.tianduan.model.Client;
-import com.tianduan.model.Engineer;
+import com.tianduan.base.enums.RolesEnum;
+import com.tianduan.model.Role;
 import com.tianduan.model.User;
-import com.tianduan.repository.Repository;
+import com.tianduan.service.RoleService;
 import com.tianduan.service.UserService;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +35,9 @@ public class UserAction extends BaseAction<User> {
     @Autowired
     UserService userService;
 
+    @Autowired
+    RoleService roleService;
+
     @Override
     public UserService getService() {
         return userService;
@@ -45,11 +48,14 @@ public class UserAction extends BaseAction<User> {
     public JsonResponse create(@RequestBody User user) {
         user.setRegistertime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         user.setToken(TokenUtil.getToken(user.getPhone(), user.getObjectId()));
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleService.getRepository().findByName(RolesEnum.ORDINARY.getName()));
+        user.setRoles(roles);
         return super.create(user);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public JsonResponse login(@RequestParam String phone, @RequestParam String password) {
+    public JsonResponse login(@RequestPart String phone, @RequestPart String password) {
         User user = getService().getRepository().findByPhone(phone);
         if (user == null) {
             return new JsonResponse(new FailDetail("用户不存在"), Message.ExecuteFailSelfDetail);
@@ -58,16 +64,6 @@ public class UserAction extends BaseAction<User> {
                 user.setLogintime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 getService().getRepository().save(user);
                 HttpSession session = request.getSession();
-//                Client client = Repository.getInstance().getRepositoryByModelName("Client");
-//                if (client != null) {
-//                    session.setAttribute(HttpUtil.KEY_USER, client);
-//                    return new JsonResponse(client);
-//                }
-//                Engineer engineer = Repository.getInstance().getRepositoryByModelName("Engineer");
-//                if (engineer != null) {
-//                    session.setAttribute(HttpUtil.KEY_USER, engineer);
-//                    return new JsonResponse(engineer);
-//                }
                 session.setAttribute(HttpUtil.KEY_USER, user);
                 return new JsonResponse(user);
             } else {

@@ -13,7 +13,7 @@ public class Engineer extends Model {
     //工程师编号
     public static final String COL_CODE = "code";
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = COL_USER, referencedColumnName = User.COL_PRIMARYKEY, unique = true)
     private User user;
     @Column(name = COL_CODE, unique = true, nullable = false)

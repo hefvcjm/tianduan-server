@@ -3,7 +3,6 @@ package com.tianduan.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tianduan.base.annotation.ToStringIgnore;
-import com.tianduan.repository.Repository;
 import com.tianduan.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class User extends Model {
@@ -40,8 +40,6 @@ public class User extends Model {
     public static final String COL_REGISTERTIEM = "registertime";
     //最后一次登录时间
     public static final String COL_LOGINTIME = "logintime";
-    //用户类型
-    public static final String COL_TYPE = "type";
     //token
     public static final String COL_TOKEN = "token";
 
@@ -68,12 +66,10 @@ public class User extends Model {
     private String registertime;
     @Column(name = COL_LOGINTIME)
     private String logintime;
-    @Column(name = COL_TYPE, nullable = false)
-    private String type;
     @Column(name = COL_TOKEN, nullable = false)
     private String token;
     @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    private List<Role> roles;
+    private Set<Role> roles;
 
     @Transient
     @JsonIgnore
@@ -94,11 +90,10 @@ public class User extends Model {
         copy(user);
     }
 
-    public User(String username, String phone, String password, String type) {
+    public User(String username, String phone, String password) {
         this.username = username;
         this.phone = phone;
         this.password = password;
-        this.type = type;
     }
 
     private void copy(User user) {
@@ -120,6 +115,12 @@ public class User extends Model {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    public void addRole(Role role) {
+        if (roles != null) {
+            roles.add(role);
         }
     }
 
@@ -211,14 +212,6 @@ public class User extends Model {
         this.logintime = logintime;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getToken() {
         return token;
     }
@@ -227,11 +220,11 @@ public class User extends Model {
         this.token = token;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 }

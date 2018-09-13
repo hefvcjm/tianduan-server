@@ -1,8 +1,15 @@
 package com.tianduan.base;
 
+import com.tianduan.base.enums.RolesEnum;
+import com.tianduan.base.filter.LoginFilter;
 import com.tianduan.model.Model;
+import com.tianduan.model.Role;
+import com.tianduan.repository.RoleRepository;
+import com.tianduan.service.RoleService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +25,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public abstract class BaseAction<T extends Model> {
+
+    protected static Logger logger = Logger.getLogger(BaseAction.class);
 
     @Autowired
     protected HttpServletRequest request;

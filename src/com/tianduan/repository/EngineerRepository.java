@@ -7,4 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface EngineerRepository extends PagingAndSortingRepository<Engineer, Long> {
 
     Engineer findByUser(User user);
+
+    Engineer findByCode(String code);
 }

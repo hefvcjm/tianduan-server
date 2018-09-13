@@ -12,7 +12,7 @@ public class Client extends Model {
     //账号
     public static final String COL_CODE = "code";
 
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = COL_USER, referencedColumnName = User.COL_PRIMARYKEY, unique = true)
     private User user;
     @Column(name = COL_CODE, unique = true, nullable = false)
