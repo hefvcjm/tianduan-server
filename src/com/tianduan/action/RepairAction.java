@@ -8,6 +8,7 @@ import com.tianduan.base.Util.FileUtil;
 import com.tianduan.base.Util.HttpUtil;
 import com.tianduan.base.Util.PropertiesUtil;
 import com.tianduan.base.enums.RepairStatusesEnum;
+import com.tianduan.exception.IllegalFileTypeException;
 import com.tianduan.model.Client;
 import com.tianduan.model.Repair;
 import com.tianduan.model.RepairStatus;
@@ -96,19 +97,27 @@ public class RepairAction extends BaseAction<Repair> {
         if (user == null) {
             return new JsonResponse(Message.ExecuteFail);
         }
-        repair.setPictures(saveFiles(pictures, user, repair.getObjectId(), "pictures", null).toString());
-        repair.setAudios(saveFiles(audios, user, repair.getObjectId(), "audios", null).toString());
-        repair.setVideos(saveFiles(videos, user, repair.getObjectId(), "videos", null).toString());
+        try {
+            repair.setPictures(saveFiles(pictures, user, repair.getObjectId(), "pictures", FileUtil.LegalFileType.PICTURE).toString());
+            repair.setAudios(saveFiles(audios, user, repair.getObjectId(), "audios", FileUtil.LegalFileType.AUDIO).toString());
+            repair.setVideos(saveFiles(videos, user, repair.getObjectId(), "videos", FileUtil.LegalFileType.VIDEO).toString());
+        } catch (IllegalFileTypeException e) {
+            e.printStackTrace();
+            return new JsonResponse(e.getMessage(), Message.ExecuteFail);
+        }
         return super.update(repair);
     }
 
-    private List<String> saveFiles(MultipartFile[] files, User user, String objectId, String subclass, String fileType) {
+    private List<String> saveFiles(MultipartFile[] files, User user, String objectId, String subclass, FileUtil.LegalFileType fileType) throws IllegalFileTypeException {
         String path = PropertiesUtil.getProperties("upload.file.save.base-path") + "\\"
                 + user.getObjectId() + "\\" + "repairs" + "\\"
                 + objectId;
         int i = 0;
         List<String> paths = new ArrayList<>();
         for (MultipartFile file : files) {
+            if (!FileUtil.isLegalFileType(file, fileType)) {
+                throw new IllegalFileTypeException(FileUtil.getFileExtension(file), fileType.getName());
+            }
             String realPath = path + "\\" + subclass + "\\";
             String name = i + "-" + file.getOriginalFilename();
             try {
