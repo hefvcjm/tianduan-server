@@ -1,5 +1,7 @@
 package com.tianduan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -14,8 +16,9 @@ public class RepairStatus extends Model {
     //状态
     public static final String COL_STATUS = "status";
 
-    @ManyToOne(cascade = {CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    @JoinColumn(name = COL_REPAIR, nullable = false)
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinColumn(name = COL_REPAIR, referencedColumnName = Repair.COL_PRIMARYKEY, nullable = false)
+    @JsonIgnore
     private Repair repair;
     @Column(name = COL_TIME, nullable = false)
     private String time;

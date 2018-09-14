@@ -43,16 +43,16 @@ public class ClientAction extends BaseAction<Client> {
 
     @Override
     @RequestMapping(value = "/new", method = RequestMethod.PUT)
-    public JsonResponse create(@RequestBody Client model) {
-        User user = userService.getRepository().findByObjectId(model.getUser().getObjectId());
+    public JsonResponse create(@RequestBody Client client) {
+        User user = userService.getRepository().findByObjectId(client.getUser().getObjectId());
         if (user != null) {
             Role role = roleService.getRepository().findByName(RolesEnum.CLIENT.getName());
             if (PropertiesUtil.checkRoleIsOverlap(user, role)) {
                 return new JsonResponse(new FailDetail("角色冲突"), Message.ExecuteFailSelfDetail);
             }
             user.addRole(role);
-            model.setUser(user);
-            return super.create(model);
+            client.setUser(user);
+            return super.create(client);
         }
         return new JsonResponse(new FailDetail("用户不存在"), Message.ExecuteFailSelfDetail);
     }

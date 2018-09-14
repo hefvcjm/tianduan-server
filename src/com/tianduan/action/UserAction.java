@@ -55,7 +55,7 @@ public class UserAction extends BaseAction<User> {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public JsonResponse login(@RequestParam String phone, @RequestParam String password) {
+    public JsonResponse login(@RequestPart String phone, @RequestPart String password) {
         User user = getService().getRepository().findByPhone(phone);
         if (user == null) {
             return new JsonResponse(new FailDetail("用户不存在"), Message.ExecuteFailSelfDetail);

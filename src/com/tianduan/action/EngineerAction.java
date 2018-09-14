@@ -36,16 +36,16 @@ public class EngineerAction extends BaseAction<Engineer> {
 
     @Override
     @RequestMapping(value = "/new", method = RequestMethod.PUT)
-    public JsonResponse create(@RequestBody Engineer model) {
-        User user = userService.getRepository().findByObjectId(model.getUser().getObjectId());
+    public JsonResponse create(@RequestBody Engineer engineer) {
+        User user = userService.getRepository().findByObjectId(engineer.getUser().getObjectId());
         if (user != null) {
             Role role = roleService.getRepository().findByName(RolesEnum.ENGINEER.getName());
             if (PropertiesUtil.checkRoleIsOverlap(user, role)) {
                 return new JsonResponse(new FailDetail("角色冲突"), Message.ExecuteFailSelfDetail);
             }
             user.addRole(role);
-            model.setUser(user);
-            return super.create(model);
+            engineer.setUser(user);
+            return super.create(engineer);
         }
         return new JsonResponse(new FailDetail("用户不存在"), Message.ExecuteFailSelfDetail);
     }

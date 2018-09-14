@@ -1,13 +1,16 @@
 package com.tianduan.action;
 
 import com.tianduan.base.BaseAction;
+import com.tianduan.base.FailDetail;
 import com.tianduan.base.JsonResponse;
 import com.tianduan.base.Message;
 import com.tianduan.base.Util.FileUtil;
 import com.tianduan.base.Util.HttpUtil;
 import com.tianduan.base.Util.PropertiesUtil;
+import com.tianduan.base.enums.RepairStatusesEnum;
 import com.tianduan.model.Client;
 import com.tianduan.model.Repair;
+import com.tianduan.model.RepairStatus;
 import com.tianduan.model.User;
 import com.tianduan.service.ClientService;
 import com.tianduan.service.RepairService;
@@ -18,10 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @Scope("prototype")
@@ -39,13 +39,47 @@ public class RepairAction extends BaseAction<Repair> {
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.PUT)
-    public JsonResponse create(@RequestBody Repair repair) {
-        Client client = clientService.getRepository().findByObjectId(repair.getClient().getObjectId());
+    public JsonResponse create(@RequestBody Repair repair, HttpServletRequest request) {
+        Client client = clientService.getRepository().findByUser(HttpUtil.getCurrentUser(request));
+        if (client == null) {
+            return new JsonResponse(new FailDetail("无权限报修"), Message.ExecuteFailSelfDetail);
+        }
         repair.setClient(client);
         repair.setTicket(UUID.randomUUID().toString().replace("-", ""));
         repair.setObjectId(UUID.randomUUID().toString().replace("-", ""));
         repair.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        RepairStatus status = new RepairStatus();
+        status.setRepair(repair);
+        status.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        status.setStatus(RepairStatusesEnum.COMMITED.getName());
+        status.setObjectId(UUID.randomUUID().toString().replace("-", ""));
+        if (repair.getStatuses() == null) {
+            repair.setStatuses(new HashSet<>());
+            repair.addStatus(status);
+        }
+//        RestTemplate restTemplate = new RestTemplate();
+//        HttpHeaders headers = new HttpHeaders();
+//        Enumeration<String> headerNames = request.getHeaderNames();
+//        while (headerNames.hasMoreElements()) {
+//            String key = headerNames.nextElement();
+//            headers.add(key, request.getHeader(key));
+//        }
+//        ResponseEntity<JsonResponse> response = restTemplate.exchange("http://localhost:8080/tianduan/repair/status/new"
+//                , HttpMethod.PUT
+//                , new HttpEntity<RepairStatus>(status, headers)
+//                , JsonResponse.class);
+//        logger.info(response.getBody());
         return super.create(repair);
+    }
+
+    @RequestMapping(value = "/queryall", method = RequestMethod.GET)
+    public JsonResponse queryall() {
+        Client client = clientService.getRepository().findByUser(HttpUtil.getCurrentUser(request));
+        if (client == null) {
+            return new JsonResponse(new FailDetail("无权限报修"), Message.ExecuteFailSelfDetail);
+        }
+        Repair[] repairs = repairService.getRepository().findByClient(client);
+        return new JsonResponse(repairs);
     }
 
     @RequestMapping(value = "/file/{objectId}", method = RequestMethod.POST)

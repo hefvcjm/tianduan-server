@@ -1,5 +1,7 @@
 package com.tianduan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -18,6 +20,8 @@ public class Engineer extends Model {
     private User user;
     @Column(name = COL_CODE, unique = true, nullable = false)
     private String code;
+    @ManyToMany(cascade = {CascadeType.REFRESH})
+    private Set<Maintain> maintains;
 
     public Engineer() {
     }
@@ -45,5 +49,13 @@ public class Engineer extends Model {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Set<Maintain> getMaintains() {
+        return maintains;
+    }
+
+    public void setMaintains(Set<Maintain> maintains) {
+        this.maintains = maintains;
     }
 }

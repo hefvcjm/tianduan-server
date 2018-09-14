@@ -1,5 +1,7 @@
 package com.tianduan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -16,11 +18,11 @@ public class Maintain extends Model {
     public static final String COL_STATUS = "status";
 
     @OneToOne(cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = COL_REPAIR, referencedColumnName = Repair.COL_PRIMARYKEY, nullable = false)
+    @JoinColumn(name = COL_REPAIR, referencedColumnName = Repair.COL_PRIMARYKEY, nullable = false, unique = true)
     private Repair repair;
-    @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Engineer> engineers;
-    @OneToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = MaintainStatus.COL_MAINTAIN)
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = MaintainStatus.COL_MAINTAIN)
     private Set<MaintainStatus> statuses;
 
     public Maintain() {
@@ -29,6 +31,15 @@ public class Maintain extends Model {
 //    public Maintain(long id) {
 //        super(id);
 //    }
+
+    public void addEngineer(Engineer engineer) {
+        engineers.add(engineer);
+    }
+
+
+    public void addStatus(MaintainStatus status) {
+        statuses.add(status);
+    }
 
     public Repair getRepair() {
         return repair;

@@ -1,5 +1,7 @@
 package com.tianduan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -31,8 +33,9 @@ public class Repair extends Model {
     //状态
     public static final String COL_STATUS = "status";
 
-    @OneToOne(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = COL_CLIENT, referencedColumnName = Client.COL_PRIMARYKEY, nullable = false)
+    @JsonIgnore
     private Client client;
     @Column(name = COL_NAME)
     private String name;
@@ -52,7 +55,7 @@ public class Repair extends Model {
     private String audios;
     @Column(name = COL_VIDEOS)
     private String videos;
-    @OneToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = RepairStatus.COL_REPAIR)
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = RepairStatus.COL_REPAIR)
     private Set<RepairStatus> statuses;
 
     public Repair() {
@@ -65,6 +68,10 @@ public class Repair extends Model {
     public Repair(Client client, String ticket) {
         this.client = client;
         this.ticket = ticket;
+    }
+
+    public void addStatus(RepairStatus status) {
+        statuses.add(status);
     }
 
     public Client getClient() {

@@ -1,5 +1,6 @@
 package com.tianduan.repository;
 
+import com.tianduan.model.Client;
 import com.tianduan.model.Repair;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -7,4 +8,6 @@ public interface RepairRepository extends PagingAndSortingRepository<Repair, Lon
     Repair findByTicket(String ticket);
 
     Repair findByObjectId(String objectId);
+
+    Repair[] findByClient(Client client);
 }

@@ -1,7 +1,6 @@
 package com.tianduan.model;
 
 import com.tianduan.base.annotation.ToStringIgnore;
-import com.tianduan.repository.Repository;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,7 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @MappedSuperclass
 public class Model implements Serializable {

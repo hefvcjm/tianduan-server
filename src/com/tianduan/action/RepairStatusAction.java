@@ -1,12 +1,12 @@
 package com.tianduan.action;
 
 import com.tianduan.base.BaseAction;
+import com.tianduan.base.JsonResponse;
 import com.tianduan.model.RepairStatus;
 import com.tianduan.service.RepairStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Scope("prototype")
@@ -20,4 +20,10 @@ public class RepairStatusAction extends BaseAction<RepairStatus> {
     public RepairStatusService getService() {
         return repairStatusService;
     }
+
+//    @Override
+//    @RequestMapping(value = "/new", method = RequestMethod.PUT)
+//    public JsonResponse create(@RequestBody RepairStatus model) {
+//        return super.create(model);
+//    }
 }

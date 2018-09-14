@@ -1,6 +1,9 @@
 package com.tianduan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Client extends Model {
@@ -17,6 +20,8 @@ public class Client extends Model {
     private User user;
     @Column(name = COL_CODE, unique = true, nullable = false)
     private String code;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = Repair.COL_CLIENT)
+    private Set<Repair> repairs;
 
     public Client() {
     }
@@ -44,5 +49,13 @@ public class Client extends Model {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Set<Repair> getRepairs() {
+        return repairs;
+    }
+
+    public void setRepairs(Set<Repair> repairs) {
+        this.repairs = repairs;
     }
 }

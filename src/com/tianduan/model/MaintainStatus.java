@@ -1,5 +1,7 @@
 package com.tianduan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -15,8 +17,9 @@ public class MaintainStatus extends Model {
     public static final String COL_STATUS = "status";
 
 
-    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = COL_MAINTAIN, referencedColumnName = Maintain.COL_PRIMARYKEY, nullable = false)
+    @JsonIgnore
     private Maintain maintain;
     @Column(name = COL_TIME, nullable = false)
     private String time;
