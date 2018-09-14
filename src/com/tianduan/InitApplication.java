@@ -1,6 +1,6 @@
 package com.tianduan;
 
-import com.tianduan.base.BaseAction;
+import com.tianduan.base.Util.HttpUtil;
 import com.tianduan.base.enums.RolesEnum;
 import com.tianduan.model.Role;
 import com.tianduan.service.RoleService;
@@ -9,16 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import javax.annotation.Resource;
 import java.util.UUID;
 
 @Component
 public class InitApplication implements ApplicationRunner {
 
-    protected static Logger logger = Logger.getLogger(BaseAction.class);
+    protected static Logger logger = Logger.getLogger(InitApplication.class);
 
     @Autowired
     private RoleService roleService;
+
+    @Resource
+    private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
@@ -37,5 +42,6 @@ public class InitApplication implements ApplicationRunner {
                 roleService.getRepository().save(role);
             }
         }
+        HttpUtil.initHandlerMethodMap(requestMappingHandlerMapping.getHandlerMethods());
     }
 }

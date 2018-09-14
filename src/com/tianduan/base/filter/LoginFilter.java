@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tianduan.base.JsonResponse;
 import com.tianduan.chat.ChatServer;
 import org.apache.log4j.Logger;
+import org.springframework.core.annotation.Order;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = "/*", filterName = "loginFilter")
+@Order(1)
 public class LoginFilter implements Filter {
 
     private static Logger logger = Logger.getLogger(LoginFilter.class);

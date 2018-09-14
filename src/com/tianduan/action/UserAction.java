@@ -6,6 +6,7 @@ import com.tianduan.base.JsonResponse;
 import com.tianduan.base.Message;
 import com.tianduan.base.Util.HttpUtil;
 import com.tianduan.base.Util.TokenUtil;
+import com.tianduan.base.annotation.RequestRole;
 import com.tianduan.base.enums.RolesEnum;
 import com.tianduan.model.Role;
 import com.tianduan.model.User;
@@ -85,6 +86,7 @@ public class UserAction extends BaseAction<User> {
     }
 
     @RequestMapping(value = "/urls", method = RequestMethod.GET)
+    @RequestRole(role = RolesEnum.ADMIN)
     public JsonResponse getURLs() {
         List<String> uList = new ArrayList<String>();//存储所有url集合
         WebApplicationContext wac = (WebApplicationContext) request.getAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE);//获取上下文对象
