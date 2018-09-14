@@ -20,7 +20,8 @@ public class Engineer extends Model {
     private User user;
     @Column(name = COL_CODE, unique = true, nullable = false)
     private String code;
-    @ManyToMany(cascade = {CascadeType.REFRESH})
+    @ManyToMany(mappedBy = "engineers")
+    @JsonIgnore
     private Set<Maintain> maintains;
 
     public Engineer() {

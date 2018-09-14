@@ -70,10 +70,16 @@ public class MaintainAction extends BaseAction<Maintain> {
         status.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         status.setStatus(MaintainStatusesEnum.HANDLING.getName());
         status.setObjectId(UUID.randomUUID().toString().replace("-", ""));
-        if (repair.getStatuses() == null) {
-            maintain.setStatuses(new HashSet<>());
-            maintain.addStatus(status);
-        }
+        maintain.addStatus(status);
         return super.create(maintain);
+    }
+
+    @RequestMapping(value = "/queryall", method = RequestMethod.GET)
+    public JsonResponse queryall(HttpServletRequest request) {
+        Engineer engineer = engineerService.getRepository().findByUser(HttpUtil.getCurrentUser(request));
+        if (engineer == null) {
+            return new JsonResponse(Message.ExecuteFail);
+        }
+        return new JsonResponse(engineer.getMaintains());
     }
 }

@@ -20,7 +20,10 @@ public class Maintain extends Model {
     @OneToOne(cascade = {CascadeType.REFRESH})
     @JoinColumn(name = COL_REPAIR, referencedColumnName = Repair.COL_PRIMARYKEY, nullable = false, unique = true)
     private Repair repair;
-    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(name = "maintain_engineer"
+            , joinColumns = @JoinColumn(name = "maintain_id", referencedColumnName = Maintain.COL_PRIMARYKEY)
+            , inverseJoinColumns = @JoinColumn(name = "engineer_id", referencedColumnName = Engineer.COL_PRIMARYKEY))
     private Set<Engineer> engineers;
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = MaintainStatus.COL_MAINTAIN)
     private Set<MaintainStatus> statuses;
