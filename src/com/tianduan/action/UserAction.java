@@ -5,6 +5,7 @@ import com.tianduan.base.FailDetail;
 import com.tianduan.base.JsonResponse;
 import com.tianduan.base.Message;
 import com.tianduan.base.Util.HttpUtil;
+import com.tianduan.base.Util.PasswordUtil;
 import com.tianduan.base.Util.TokenUtil;
 import com.tianduan.base.annotation.RequestRole;
 import com.tianduan.base.enums.RolesEnum;
@@ -49,6 +50,7 @@ public class UserAction extends BaseAction<User> {
     public JsonResponse create(@RequestBody User user) {
         user.setRegistertime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         user.setToken(TokenUtil.getToken(user.getPhone(), user.getObjectId()));
+        user.setPassword(PasswordUtil.encode(user.getPassword()));
         Set<Role> roles = new HashSet<>();
         roles.add(roleService.getRepository().findByName(RolesEnum.ORDINARY.getName()));
         user.setRoles(roles);
@@ -61,7 +63,7 @@ public class UserAction extends BaseAction<User> {
         if (user == null) {
             return new JsonResponse(new FailDetail("用户不存在"), Message.ExecuteFailSelfDetail);
         } else {
-            if (user.getPassword().equals(password)) {
+            if (PasswordUtil.match(user.getPassword(), password)) {
                 user.setLogintime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 getService().getRepository().save(user);
                 HttpSession session = request.getSession();

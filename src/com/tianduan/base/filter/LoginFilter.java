@@ -12,28 +12,36 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Arrays;
 
-@WebFilter(urlPatterns = "/*", filterName = "loginFilter")
-@Order(1)
 public class LoginFilter implements Filter {
 
     private static Logger logger = Logger.getLogger(LoginFilter.class);
 
+    private String[] excludedUrls;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        excludedUrls = filterConfig.getInitParameter("excludedUrls").replace("\n","").replace(" ","").split(",");
     }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        logger.debug("filter one");
+        logger.info("filter one");
+        logger.info(Arrays.asList(excludedUrls).toString());
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        String uri = request.getRequestURI();
+        String uri = request.getServletPath();
         logger.info(uri);
-        if (uri.contains("/login") || uri.contains("/register") || uri.contains("/chat")) {
+        boolean isExcludedUrl = false;
+        for (String item : excludedUrls) { //判断是否在过滤url之外
+            if (uri.contains(item)) {
+                isExcludedUrl = true;
+                break;
+            }
+        }
+        if (isExcludedUrl) {
             filterChain.doFilter(servletRequest, servletResponse);
-            return;
         } else {
             HttpSession session = request.getSession();
             if (session != null) {
@@ -42,12 +50,12 @@ public class LoginFilter implements Filter {
                     return;
                 }
             }
+            request.setCharacterEncoding("utf-8");
+            response.setHeader("Content-type", "application/json;charset=UTF-8");
+            response.setCharacterEncoding("utf-8");
+            response.getWriter().append(new ObjectMapper().writeValueAsString(new JsonResponse(null, "用户未登录")));
+            logger.info("用户未登录");
         }
-        request.setCharacterEncoding("utf-8");
-        response.setHeader("Content-type", "application/json;charset=UTF-8");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().append(new ObjectMapper().writeValueAsString(new JsonResponse(null, "用户未登录")));
-        logger.info("用户未登录");
     }
 
     @Override

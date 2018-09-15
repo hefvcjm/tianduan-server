@@ -102,7 +102,6 @@ public class RepairAction extends BaseAction<Repair> {
             repair.setAudios(saveFiles(audios, user, repair.getObjectId(), "audios", FileUtil.LegalFileType.AUDIO).toString());
             repair.setVideos(saveFiles(videos, user, repair.getObjectId(), "videos", FileUtil.LegalFileType.VIDEO).toString());
         } catch (IllegalFileTypeException e) {
-            e.printStackTrace();
             return new JsonResponse(e.getMessage(), Message.ExecuteFail);
         }
         return super.update(repair);
