@@ -48,7 +48,7 @@ public abstract class BaseAction<T extends Model> {
         }
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    //@RequestMapping(value = "/update", method = RequestMethod.POST)
     public JsonResponse update(@RequestBody T model) {
         T t = getService().getRepository().findOne(model.getId());
         if (t == null) {
@@ -59,7 +59,7 @@ public abstract class BaseAction<T extends Model> {
         }
     }
 
-    protected Object checkField(T model) {
+    private Object checkField(T model) {
         Map<String, Object> checkResult = new HashMap<>();
         Class<? extends Model> clazz = model.getClass();
         Field[] fields = clazz.getDeclaredFields();

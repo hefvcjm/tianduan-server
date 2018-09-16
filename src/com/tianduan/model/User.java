@@ -2,11 +2,15 @@ package com.tianduan.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tianduan.base.JsonResponse;
+import com.tianduan.base.Message;
+import com.tianduan.base.annotation.FieldCannotUpdate;
 import com.tianduan.base.annotation.ToStringIgnore;
 import com.tianduan.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -63,10 +67,13 @@ public class User extends Model {
     @Column(name = COL_DUTY)
     private String duty;
     @Column(name = COL_REGISTERTIEM, nullable = false)
+    @FieldCannotUpdate
     private String registertime;
     @Column(name = COL_LOGINTIME)
+    @FieldCannotUpdate
     private String logintime;
     @Column(name = COL_TOKEN, nullable = false)
+    @FieldCannotUpdate
     private String token;
     @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<Role> roles;
@@ -101,11 +108,12 @@ public class User extends Model {
         for (Field field : fields) {
             if (field.getAnnotation(Column.class) != null) {
                 String fieldName = field.getName();
+                Class<?> fieldType = field.getType();
                 String getName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
                 String setName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
                 try {
                     Method getMethod = getClass().getMethod(getName);
-                    Method setMethod = getClass().getMethod(setName);
+                    Method setMethod = getClass().getMethod(setName, fieldType);
                     setMethod.invoke(this, getMethod.invoke(user));
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
@@ -113,6 +121,24 @@ public class User extends Model {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void update(User user) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Field[] fields = getClass().getDeclaredFields();
+        for (Field field : fields) {
+            Annotation annotation = field.getAnnotation(Column.class);
+            if (annotation != null && !((Column) annotation).unique() && field.getAnnotation(FieldCannotUpdate.class) == null) {
+                String fieldName = field.getName();
+                Class<?> fieldType = field.getType();
+                String getName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                String setName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                Method getMethod = getClass().getMethod(getName);
+                Method setMethod = getClass().getMethod(setName, fieldType);
+                if (getMethod.invoke(user) != null) {
+                    setMethod.invoke(this, getMethod.invoke(user));
                 }
             }
         }

@@ -24,8 +24,11 @@ import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import com.google.common.collect.Lists;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -85,6 +88,31 @@ public class UserAction extends BaseAction<User> {
         } else {
             return new JsonResponse(null, "用户未登录");
         }
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public JsonResponse update(@RequestBody User user, HttpServletRequest request) {
+        logger.info(user);
+        User oldUser = HttpUtil.getCurrentUser(request);
+        try {
+            oldUser.update(user);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return new JsonResponse(Message.ExecuteFail);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return new JsonResponse(Message.ExecuteFail);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return new JsonResponse(Message.ExecuteFail);
+        }
+        return super.update(oldUser);
+    }
+
+    @RequestMapping(value = "/queryall", method = RequestMethod.GET)
+    @RequestRole(role = RolesEnum.ADMIN)
+    public JsonResponse queryall() {
+        return new JsonResponse(Lists.newArrayList(getService().getRepository().findAll()));
     }
 
     @RequestMapping(value = "/urls", method = RequestMethod.GET)
