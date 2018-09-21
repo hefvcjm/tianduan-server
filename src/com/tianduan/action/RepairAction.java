@@ -14,6 +14,7 @@ import com.tianduan.model.Repair;
 import com.tianduan.model.RepairStatus;
 import com.tianduan.model.User;
 import com.tianduan.service.ClientService;
+import com.tianduan.service.MaintainService;
 import com.tianduan.service.RepairService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -33,6 +34,8 @@ public class RepairAction extends BaseAction<Repair> {
     RepairService repairService;
     @Autowired
     ClientService clientService;
+    @Autowired
+    MaintainService maintainService;
 
     @Override
     public RepairService getService() {
