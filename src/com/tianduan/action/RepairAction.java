@@ -9,13 +9,11 @@ import com.tianduan.base.Util.HttpUtil;
 import com.tianduan.base.Util.PropertiesUtil;
 import com.tianduan.base.enums.RepairStatusesEnum;
 import com.tianduan.exception.IllegalFileTypeException;
-import com.tianduan.model.Client;
-import com.tianduan.model.Repair;
-import com.tianduan.model.RepairStatus;
-import com.tianduan.model.User;
+import com.tianduan.model.*;
 import com.tianduan.service.ClientService;
 import com.tianduan.service.MaintainService;
 import com.tianduan.service.RepairService;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
@@ -83,7 +81,18 @@ public class RepairAction extends BaseAction<Repair> {
             return new JsonResponse(new FailDetail("无权限报修"), Message.ExecuteFailSelfDetail);
         }
         Repair[] repairs = repairService.getRepository().findByClient(client);
-        return new JsonResponse(repairs);
+        JsonResponse response = new JsonResponse(null, Message.ExecuteOK);
+        JSONArray array = new JSONArray();
+        for (Repair repair : repairs) {
+            Maintain maintain = maintainService.getRepository().findByRepair(repair);
+            if (maintain == null) {
+                maintain = new Maintain();
+                maintain.setRepair(repair);
+            }
+            array.put(maintain);
+        }
+        response.setData(array);
+        return response;
     }
 
     @RequestMapping(value = "/file/{objectId}", method = RequestMethod.POST)
