@@ -3,6 +3,7 @@ package com.tianduan.chat;
 import com.tianduan.chat.message.Message;
 import com.tianduan.exception.NullFieldException;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
@@ -36,15 +37,34 @@ public class ChatServer {
     }
 
     @OnMessage
-    public void onMessage(String message) {
+    public void onMessage(@PathParam("objectId") String objectId, String message) {
         try {
             Message msg = new Message(message);
             logger.info("接收到消息：" + message);
-            String userId = msg.getReceiverId();
-            logger.info("receiverId=" + userId);
-            Session rcvSession = userMap.get(userId);
-            rcvSession.getBasicRemote().sendText(msg.createMessage().toString());
-            logger.info(msg.createMessage().toString());
+            JSONObject json = new JSONObject(message);
+            String type = json.getString("type");
+            String userId;
+            Session rcvSession;
+            switch (type) {
+                case "message":
+                    userId = msg.getReceiverId();
+                    logger.info("receiverId=" + userId);
+                    rcvSession = userMap.get(userId);
+                    rcvSession.getBasicRemote().sendText(msg.createMessage().toString());
+                    logger.info(msg.createMessage().toString());
+                    break;
+                case "ping":
+                    logger.info("receiverId=" + objectId);
+                    rcvSession = userMap.get(objectId);
+                    if (rcvSession != null) {
+                        rcvSession.getBasicRemote().sendText(new JSONObject().put("type", "pong").toString());
+                    } else {
+                        logger.info("rcvSession==null:" + message);
+                    }
+                    break;
+                default:
+                    break;
+            }
         } catch (NullFieldException e) {
             e.printStackTrace();
         } catch (IOException e) {

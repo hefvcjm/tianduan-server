@@ -29,7 +29,8 @@
             <param-name>excludedUrls</param-name>
             <param-value>
                 /register,
-                /login
+                /login,
+                /chat
             </param-value>
         </init-param>
     </filter>
@@ -45,7 +46,8 @@
             <param-name>excludedUrls</param-name>
             <param-value>
                 /register,
-                /login
+                /login,
+                /chat
             </param-value>
         </init-param>
     </filter>
