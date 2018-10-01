@@ -32,14 +32,15 @@ public class ChatServer {
     @OnClose
     public void onClose(@PathParam("objectId") String objectId, CloseReason closeReason) {
         logger.info("连接关闭, [reason:" + closeReason.getCloseCode() + "--" + closeReason.getReasonPhrase() + "]");
-        userMap.remove(objectId);
-        subOnlineCount();
+        if (userMap.keySet().contains(objectId)) {
+            userMap.remove(objectId);
+            subOnlineCount();
+        }
     }
 
     @OnMessage
     public void onMessage(@PathParam("objectId") String objectId, String message) {
         try {
-            Message msg = new Message(message);
             logger.info("接收到消息：" + message);
             JSONObject json = new JSONObject(message);
             String type = json.getString("type");
@@ -47,6 +48,7 @@ public class ChatServer {
             Session rcvSession;
             switch (type) {
                 case "message":
+                    Message msg = new Message(message);
                     userId = msg.getReceiverId();
                     logger.info("receiverId=" + userId);
                     rcvSession = userMap.get(userId);
@@ -56,11 +58,7 @@ public class ChatServer {
                 case "ping":
                     logger.info("receiverId=" + objectId);
                     rcvSession = userMap.get(objectId);
-                    if (rcvSession != null) {
-                        rcvSession.getBasicRemote().sendText(new JSONObject().put("type", "pong").toString());
-                    } else {
-                        logger.info("rcvSession==null:" + message);
-                    }
+                    rcvSession.getBasicRemote().sendText(new JSONObject().put("type", "pong").toString());
                     break;
                 default:
                     break;
@@ -73,7 +71,11 @@ public class ChatServer {
     }
 
     @OnError
-    public void onError(Session session, Throwable throwable) {
+    public void onError(@PathParam("objectId") String objectId, Throwable throwable) {
+        if (userMap.keySet().contains(objectId)) {
+            userMap.remove(objectId);
+            subOnlineCount();
+        }
         throw new IllegalArgumentException(throwable);
     }
 
