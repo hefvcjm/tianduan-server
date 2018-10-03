@@ -1,15 +1,11 @@
 package com.tianduan.chat.message;
 
-import com.tianduan.chat.ChatServer;
-import com.tianduan.exception.NoReqiredJsonKeyException;
 import com.tianduan.exception.NullFieldException;
-import com.tianduan.model.Model;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,6 +21,8 @@ public class Message {
     private static final String KEY_RECEIVER_ID = "receiverId";
     private static final String KEY_CONTENT_TYPE = "contentType";
     private static final String KEY_CONTENT = "content";
+    private static final String KEY_SENDER_NAME = "senderName";
+    private static final String KEY_RECEIVER_NAME = "receiverName";
     private static final String KEY_TIME = "time";
 
     //消息类型
@@ -45,6 +43,12 @@ public class Message {
     //消息内容
     @NotNull
     private String content;
+    //发送者名字
+    @NotNull
+    private String senderName;
+    //接收者名字
+    @NotNull
+    private String receiverName;
     //时间
     private Date time;
 
@@ -60,6 +64,8 @@ public class Message {
         setReceiverId(json.getString(KEY_RECEIVER_ID));
         setContentType(json.getString(KEY_CONTENT_TYPE));
         setContent(json.getString(KEY_CONTENT));
+        setSenderName(json.getString(KEY_SENDER_NAME));
+        setReceiverName(json.getString(KEY_RECEIVER_NAME));
         if (keys.contains(KEY_TIME)) {
             try {
                 setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse((String) json.get(KEY_TIME)));
@@ -99,7 +105,9 @@ public class Message {
                 .put(KEY_CONTENT_TYPE, contentType)
                 .put(KEY_CONTENT, content)
                 .put(KEY_RECEIVER_TYPE, receiverType)
-                .put(KEY_RECEIVER_ID, receiverId);
+                .put(KEY_RECEIVER_ID, receiverId)
+                .put(KEY_SENDER_NAME, senderName)
+                .put(KEY_RECEIVER_NAME, receiverName);
         if (getTime() == null) {
             setTime(new Date());
         }
@@ -153,6 +161,24 @@ public class Message {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @NotNull
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    @NotNull
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 
     public Date getTime() {
