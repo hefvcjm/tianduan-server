@@ -49,11 +49,11 @@ public class Repair extends Model {
     private String ticket;
     @Column(name = COL_TIME, nullable = false)
     private String time;
-    @Column(name = COL_PICTURES)
+    @Column(name = COL_PICTURES, length = 2048)
     private String pictures;
-    @Column(name = COL_AUDIOS)
+    @Column(name = COL_AUDIOS, length = 2048)
     private String audios;
-    @Column(name = COL_VIDEOS)
+    @Column(name = COL_VIDEOS, length = 2048)
     private String videos;
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = RepairStatus.COL_REPAIR)
     private Set<RepairStatus> statuses;

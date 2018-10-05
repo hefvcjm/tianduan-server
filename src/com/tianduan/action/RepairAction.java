@@ -110,36 +110,42 @@ public class RepairAction extends BaseAction<Repair> {
             return new JsonResponse(Message.ExecuteFail);
         }
         try {
-            repair.setPictures(saveFiles(pictures, user, repair.getObjectId(), "pictures", FileUtil.LegalFileType.PICTURE).toString());
-            repair.setAudios(saveFiles(audios, user, repair.getObjectId(), "audios", FileUtil.LegalFileType.AUDIO).toString());
-            repair.setVideos(saveFiles(videos, user, repair.getObjectId(), "videos", FileUtil.LegalFileType.VIDEO).toString());
+            if (pictures != null) {
+                repair.setPictures(FileUtil.saveFiles(pictures, user, repair.getObjectId(), "repairs", "pictures", FileUtil.LegalFileType.PICTURE).toString());
+            }
+            if (audios != null) {
+                repair.setAudios(FileUtil.saveFiles(audios, user, repair.getObjectId(), "repairs", "audios", FileUtil.LegalFileType.AUDIO).toString());
+            }
+            if (videos != null) {
+                repair.setVideos(FileUtil.saveFiles(videos, user, repair.getObjectId(), "repairs", "videos", FileUtil.LegalFileType.VIDEO).toString());
+            }
         } catch (IllegalFileTypeException e) {
             return new JsonResponse(e.getMessage(), Message.ExecuteFail);
         }
         return super.update(repair);
     }
 
-    private List<String> saveFiles(MultipartFile[] files, User user, String objectId, String subclass, FileUtil.LegalFileType fileType) throws IllegalFileTypeException {
-        String path = PropertiesUtil.getProperties("upload.file.save.base-path") + "\\"
-                + user.getObjectId() + "\\" + "repairs" + "\\"
-                + objectId;
-        int i = 0;
-        List<String> paths = new ArrayList<>();
-        for (MultipartFile file : files) {
-            if (!FileUtil.isLegalFileType(file, fileType)) {
-                throw new IllegalFileTypeException(FileUtil.getFileExtension(file), fileType.getName());
-            }
-            String realPath = path + "\\" + subclass + "\\";
-            String name = i + "-" + file.getOriginalFilename();
-            try {
-                FileUtil.saveFile(file.getBytes(), realPath, name);
-                paths.add(name);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            i++;
-        }
-        return paths;
-    }
+//    private List<String> saveFiles(MultipartFile[] files, User user, String objectId, String subclass, FileUtil.LegalFileType fileType) throws IllegalFileTypeException {
+//        String path = PropertiesUtil.getProperties("upload.file.save.base-path") + "\\"
+//                + user.getObjectId() + "\\" + "repairs" + "\\"
+//                + objectId;
+//        int i = 0;
+//        List<String> paths = new ArrayList<>();
+//        for (MultipartFile file : files) {
+//            if (!FileUtil.isLegalFileType(file, fileType)) {
+//                throw new IllegalFileTypeException(FileUtil.getFileExtension(file), fileType.getName());
+//            }
+//            String realPath = path + "\\" + subclass + "\\";
+//            String name = i + "-" + file.getOriginalFilename();
+//            try {
+//                FileUtil.saveFile(file.getBytes(), realPath, name);
+//                paths.add(name);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            i++;
+//        }
+//        return paths;
+//    }
 
 }

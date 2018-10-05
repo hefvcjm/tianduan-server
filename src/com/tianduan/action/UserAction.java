@@ -4,11 +4,13 @@ import com.tianduan.base.BaseAction;
 import com.tianduan.base.FailDetail;
 import com.tianduan.base.JsonResponse;
 import com.tianduan.base.Message;
+import com.tianduan.base.Util.FileUtil;
 import com.tianduan.base.Util.HttpUtil;
 import com.tianduan.base.Util.PasswordUtil;
 import com.tianduan.base.Util.TokenUtil;
 import com.tianduan.base.annotation.RequestRole;
 import com.tianduan.base.enums.RolesEnum;
+import com.tianduan.exception.IllegalFileTypeException;
 import com.tianduan.model.Role;
 import com.tianduan.model.User;
 import com.tianduan.service.RoleService;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
@@ -103,6 +106,18 @@ public class UserAction extends BaseAction<User> {
             e.printStackTrace();
             return new JsonResponse(Message.ExecuteFail);
         } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return new JsonResponse(Message.ExecuteFail);
+        }
+        return super.update(oldUser);
+    }
+
+    @RequestMapping(value = "/update/head", method = RequestMethod.POST)
+    public JsonResponse update(@RequestParam MultipartFile picture, HttpServletRequest request) {
+        User oldUser = HttpUtil.getCurrentUser(request);
+        try {
+            oldUser.setPicture(FileUtil.saveFiles(new MultipartFile[]{picture}, oldUser, oldUser.getObjectId(), "user", "head_pic", FileUtil.LegalFileType.PICTURE).get(0));
+        } catch (IllegalFileTypeException e) {
             e.printStackTrace();
             return new JsonResponse(Message.ExecuteFail);
         }

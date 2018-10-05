@@ -1,11 +1,15 @@
 package com.tianduan.base.Util;
 
+import com.tianduan.exception.IllegalFileTypeException;
+import com.tianduan.model.User;
 import org.json.JSONArray;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class FileUtil {
@@ -108,6 +112,28 @@ public class FileUtil {
         Set<String> legalSet = legalFileType.getTypeSet();
         String fileType = getFileExtension(file);
         return isLegalFileType(fileType, legalSet);
+    }
+
+    public static List<String> saveFiles(MultipartFile[] files, User user, String objectId, String superclass, String subclass, FileUtil.LegalFileType fileType) throws IllegalFileTypeException {
+        String basePath = PropertiesUtil.getProperties("upload.file.save.base-path");
+        String uri = "\\files\\" + user.getObjectId() + "\\" + superclass + "\\" + objectId;
+        int i = 0;
+        List<String> paths = new ArrayList<>();
+        for (MultipartFile file : files) {
+            if (!FileUtil.isLegalFileType(file, fileType)) {
+                throw new IllegalFileTypeException(FileUtil.getFileExtension(file), fileType.getName());
+            }
+            String realPath = uri + "\\" + subclass + "\\";
+            String name = i + "-" + file.getOriginalFilename();
+            try {
+                FileUtil.saveFile(file.getBytes(), basePath + realPath, name);
+                paths.add((realPath + name).replace("\\", "/"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            i++;
+        }
+        return paths;
     }
 
 }
